@@ -14,8 +14,10 @@ function love.load()
             vsync = true
         })
     ]]
-
     love.graphics.setDefaultFilter( 'nearest', 'nearest' )
+
+    smallFont = love.graphics.newFont( 'font.ttf', 8 )
+    love.graphics.setFont( smallFont )
 
     push:setupScreen( VIRT_WIDTH, VIRT_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -40,14 +42,20 @@ function love.draw()
     ]]
     push:apply( 'start' )
 
+    love.graphics.clear( 40 / 255, 45 / 255, 52 / 255, 255 / 255 )
+
     love.graphics.printf(
-        'Hello Pixelated Filter',
+        'Hello Procedural Pong!',
         0,
-        VIRT_HEIGHT / 2,
+        20,
         VIRT_WIDTH,
         'center'
     )
-    
+
+    love.graphics.rectangle( 'fill', 10, 30, 5, 20 )
+    love.graphics.rectangle( 'fill', VIRT_WIDTH - 10, VIRT_HEIGHT - 50, 5, 20 )
+    love.graphics.rectangle( 'fill', VIRT_WIDTH / 2 - 2, VIRT_HEIGHT / 2 - 2, 4, 4 )
+
     push:apply( 'end' )
 end
 
