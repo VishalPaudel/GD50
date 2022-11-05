@@ -42,5 +42,5 @@ excellent for prototyping
 ## love.graphics.clear( r, g, b, a )
 ## love.graphics.rectangle( mode, x, y, width, height )
 
-### Resuming from PONG-3
-
+## Resuming from PONG-3
+dt is delta-time
