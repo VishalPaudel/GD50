@@ -44,3 +44,16 @@ excellent for prototyping
 
 ## Resuming from PONG-3
 dt is delta-time
+
+## Resuming for PONG-4
+
+## math.randomseed( num )
+## os.time()
+## math.random( min, max )
+## math.min( num1, num2 )
+## math.max( num1, num2 )
+
+## Class
+
+fields, encapsulation, a blueprint
+
