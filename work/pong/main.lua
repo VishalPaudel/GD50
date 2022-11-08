@@ -1,4 +1,7 @@
-
+--[[
+--  Vishal Paudel
+--  PONG-4
+--]]
 push = require 'push'  --[[ A library: Ulydev/push ]]
 
 WINDOW_WIDTH = 1280
@@ -10,13 +13,7 @@ VIRT_HEIGHT = 243
 PADDLE_SPEED = 200  --[[ The speed of the paddle ]]
 
 function love.load()
-    --[[ Commenting out the default method, instead using push script GD50 here, which mush be using something like this ]]
-    --[[    love.window.setMode( WINDOW_WIDTH, WINDOW_HEIGHT, {
-            fullscreen = false,
-            resizable = false,
-            vsync = true
-        })
-    ]]
+    math.randomseed( os.time() )
 
     --[[ Sets the default filter while scaling down and scaling up respectively ]]
     love.graphics.setDefaultFilter( 'nearest', 'nearest' )
@@ -40,6 +37,15 @@ function love.load()
     --[ the positions of the paddle ]]
     player1Y = 30
     player2Y = VIRT_HEIGHT - 50
+
+    --[[ velocity and position variables of the ball ]]
+    ballX = VIRT_WIDTH / 2 - 2
+    ballY = VIRT_HEIGHT / 2 - 2
+
+    ballDX = math.random( 2 ) == 1 and 100 or -100
+    ballDY = math.random( -50, 50 )
+
+    gameState = 'start'
 end
 
 function love.update( dt )
@@ -49,25 +55,42 @@ function love.update( dt )
     -- Player 1 movements
     if love.keyboard.isDown( 'w' ) then
         -- closer to Y=0
-        player1Y = player1Y + -1 * PADDLE_SPEED * dt
+        player1Y = math.max( 0, player1Y + -1 * PADDLE_SPEED * dt )
     elseif love.keyboard.isDown( 's' ) then
         -- closer to Y = VIRT_HEIGHT
-        player1Y = player1Y + PADDLE_SPEED * dt
+        player1Y = math.min( VIRT_HEIGHT - 20, player1Y + PADDLE_SPEED * dt )
     end
 
     -- Player 2 movement
     if love.keyboard.isDown( 'up' ) then
         -- closer to Y=0
-        player2Y = player2Y + -1 * PADDLE_SPEED * dt
+        player2Y = math.max( 0, player2Y + -1 * PADDLE_SPEED * dt )
     elseif love.keyboard.isDown( 'down' ) then
-        player2Y = player2Y + PADDLE_SPEED * dt
+        player2Y = math.min( VIRT_HEIGHT - 20, player2Y + PADDLE_SPEED * dt )
+    end
+
+    if gameState == 'play' then
+        ballX = ballX + ballDX * dt
+        ballY = ballY + ballDY * dt
     end
 end
 
-function love.keypressed()
+function love.keypressed( key )
     --[[ again a default function, we overload ]]
     if key == 'escape' then
         love.event.quit()
+    elseif key == 'enter' or key == 'return' then
+        if gameState == 'start' then
+            gameState = 'play'
+        else
+            gameState = 'start'
+
+            ballX = VIRT_WIDTH / 2 - 2
+            ballY = VIRT_HEIGHT / 2 - 2
+
+            ballDX = math.random( 2 ) == 1 and 100 or -100
+            ballDY = math.random( -50, 50 ) * 1.5
+        end
     end
 end
 
@@ -85,18 +108,29 @@ function love.draw()
     --[[ much like open-gl ]]
     push:apply( 'start' )
 
-    --[[ sets the color in th beginning ]]
+    --[[ sets the color in the beginning ]]
     love.graphics.clear( 40 / 255, 45 / 255, 52 / 255, 255 / 255 )
 
     --[[ the font ]]
     love.graphics.setFont( smallFont )
-    love.graphics.printf(
-        'Hello Procedural Pong!',
-        0,
-        20,
-        VIRT_WIDTH,
-        'center'
-    )
+    if gameState == 'start' then
+        love.graphics.printf(
+            'Hello Procedural Pong Start State!',
+            0,
+            20,
+            VIRT_WIDTH,
+            'center'
+        )
+    else
+        love.graphics.printf(
+            'Hello Procedural Pong Play State!',
+            0,
+            20,
+            VIRT_WIDTH,
+            'center'
+        )
+    end
+
 
     -- drawing the score fonts
     love.graphics.setFont( scoreFont )
@@ -107,7 +141,7 @@ function love.draw()
 
     love.graphics.rectangle( 'fill', 10, player1Y, 5, 20 )  --[[ paddle player1 ]]
     love.graphics.rectangle( 'fill', VIRT_WIDTH - 10, player2Y, 5, 20 )  --[[ paddle player2 ]]
-    love.graphics.rectangle( 'fill', VIRT_WIDTH / 2 - 2, VIRT_HEIGHT / 2 - 2, 4, 4 )  --[[ paddle ]]
+    love.graphics.rectangle( 'fill', ballX, ballY, 4, 4 )  --[[ paddle ]]
 
     push:apply( 'end' )
 end
